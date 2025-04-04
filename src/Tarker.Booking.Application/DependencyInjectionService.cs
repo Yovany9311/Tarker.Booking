@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 
 using Tarker.Booking.Application.Configuration;
+using Tarker.Booking.Application.DataBase.Bokings.Commands.CreateBooking;
+using Tarker.Booking.Application.DataBase.Bokings.Queries.GetAllBookings;
 using Tarker.Booking.Application.DataBase.Customer.Commands.CreateCustomer;
 using Tarker.Booking.Application.DataBase.Customer.Commands.DeleteCustomer;
 using Tarker.Booking.Application.DataBase.Customer.Commands.UpdateCustomer;
@@ -39,13 +41,16 @@ namespace Tarker.Booking.Application
             #endregion
 
             #region Customer
-            services.AddTransient<ICreateCustomerCommand, CreateCustomerCommand>(); 
-            services.AddTransient<IUpdateCustomerCommand, UpdateCustomerCommand>(); 
-            services.AddTransient<IDeleteCustomerCommand, DeleteCustomerCommand>(); 
-            services.AddTransient<IGetAllCustomersQuery, GetAllCustomersQuery>(); 
-            services.AddTransient<IGetCustomerByIdQuery, GetCustomerByIdQuery>(); 
-            services.AddTransient<IGetCustomerByDocumentNumberQuery, GetCustomerByDocumentNumberQuery>(); 
-
+            services.AddTransient<ICreateCustomerCommand, CreateCustomerCommand>();
+            services.AddTransient<IUpdateCustomerCommand, UpdateCustomerCommand>();
+            services.AddTransient<IDeleteCustomerCommand, DeleteCustomerCommand>();
+            services.AddTransient<IGetAllCustomersQuery, GetAllCustomersQuery>();
+            services.AddTransient<IGetCustomerByIdQuery, GetCustomerByIdQuery>();
+            services.AddTransient<IGetCustomerByDocumentNumberQuery, GetCustomerByDocumentNumberQuery>();
+            #endregion
+            #region Booking
+            services.AddTransient<ICreateBookingComman, CreateBookingComman>();
+            services.AddTransient<IGetAllBookingsQuery, GetAllBookingsQuery>();
 
             #endregion
             return services;
