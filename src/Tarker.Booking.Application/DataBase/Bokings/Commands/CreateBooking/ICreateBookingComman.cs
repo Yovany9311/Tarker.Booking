@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Tarker.Booking.Application.DataBase.Bokings.Commands.CreateBooking
 {
-    public interface ICreateBookingComman
+    public interface ICreateBookingCommand
     {
         Task<CreateBookingModel> Execute(CreateBookingModel model);
     }

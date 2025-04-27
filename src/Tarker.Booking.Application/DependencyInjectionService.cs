@@ -51,7 +51,7 @@ namespace Tarker.Booking.Application
             services.AddTransient<IGetCustomerByDocumentNumberQuery, GetCustomerByDocumentNumberQuery>();
             #endregion
             #region Booking
-            services.AddTransient<ICreateBookingComman, CreateBookingComman>();
+            services.AddTransient<ICreateBookingCommand, CreateBookingCommand>();
             services.AddTransient<IGetAllBookingsQuery, GetAllBookingsQuery>();
             services.AddTransient<IGetBookingByDocumentNumberQuery, GetBookingByDocumentNumberQuery>();
             services.AddTransient<IGetBookingByTypeQuery, GetBookingByTypeQuery>();

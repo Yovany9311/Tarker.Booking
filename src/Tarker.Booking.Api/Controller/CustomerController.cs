@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Tarker.Booking.Application.DataBase.Bokings.Queries.GetBookingByDocumentNumber;
 using Tarker.Booking.Application.DataBase.Customer.Commands.CreateCustomer;
 using Tarker.Booking.Application.DataBase.Customer.Commands.DeleteCustomer;
 using Tarker.Booking.Application.DataBase.Customer.Commands.UpdateCustomer;
 using Tarker.Booking.Application.DataBase.Customer.Queries.GetAllCustomers;
+using Tarker.Booking.Application.DataBase.Customer.Queries.GetCustomerById;
 using Tarker.Booking.Application.DataBase.User.Commands.DeleteUser;
 using Tarker.Booking.Application.Exceptions;
 using Tarker.Booking.Application.Features;
@@ -12,12 +14,12 @@ namespace Tarker.Booking.Api.Controller
 {
     [Route("api/v1/customer")]
     [ApiController]
-    [TypeFilter(typeof(ExceptionManager))]
+    [TypeFilter(typeof(ExceptionManager))]//permite capturar errores que no podemos controlar
 
     public class CustomerController : ControllerBase
     {
         [HttpPost("create")]
-      public async Task<IActionResult>Create(
+        public async Task<IActionResult> Create(
         [FromBody] CreateCustomerModel model,
         [FromServices] ICreateCustomerCommand createCustomerCommand)
         {
@@ -37,11 +39,11 @@ namespace Tarker.Booking.Api.Controller
             int customerId,
        [FromServices] IDeleteCustomerCommand deleteCustomerCommand)
         {
-            if(customerId == 0)
+            if (customerId == 0)
                 return StatusCode(StatusCodes.Status400BadRequest, ResponseApiService.Response(StatusCodes.Status400BadRequest));
             var data = await deleteCustomerCommand.Execute(customerId);
             if (!data)
-                return StatusCode(StatusCodes.Status204NoContent, ResponseApiService.Response(StatusCodes.Status204NoContent));
+                return StatusCode(StatusCodes.Status404NotFound, ResponseApiService.Response(StatusCodes.Status404NotFound));
             return StatusCode(StatusCodes.Status200OK, ResponseApiService.Response(StatusCodes.Status200OK));
         }
         [HttpGet("get-all")]
@@ -50,9 +52,38 @@ namespace Tarker.Booking.Api.Controller
         {
             var data = await getAllCustomersQuery.Execute();
             if (data.Count == 0)
-                return StatusCode(StatusCodes.Status204NoContent, ResponseApiService.Response(StatusCodes.Status204NoContent));
+                return StatusCode(StatusCodes.Status404NotFound, ResponseApiService.Response(StatusCodes.Status404NotFound));
             return StatusCode(StatusCodes.Status200OK, ResponseApiService.Response(StatusCodes.Status200OK, data));
 
+        }
+
+        [HttpGet("get-by-id/{customerId}")]
+        public async Task<IActionResult> GetById(int customerId,
+            [FromServices] IGetCustomerByIdQuery getCustomerByIdQuery)
+        {
+            if (customerId == 0)
+                return StatusCode(StatusCodes.Status400BadRequest, ResponseApiService.Response(StatusCodes.Status400BadRequest));
+            var data = await getCustomerByIdQuery.Execute(customerId);
+
+            if (data == null)
+                return StatusCode(StatusCodes.Status404NotFound, ResponseApiService.Response(StatusCodes.Status404NotFound));
+            return StatusCode(StatusCodes.Status200OK, ResponseApiService.Response(StatusCodes.Status200OK, data));
+
+        }
+        [HttpGet("get-by-documentNumber/{documentNumber}")]
+        public async Task<IActionResult> GetByDocumentNumber(string documentNumber,
+           [FromServices] IGetBookingByDocumentNumberQuery getBookingByDocumentNumberQuery)
+        {
+            //validar si es vacio o nulo
+            if (string.IsNullOrEmpty(documentNumber))
+                return StatusCode(StatusCodes.Status404NotFound, ResponseApiService.Response(StatusCodes.Status404NotFound));
+            //consultar al servicio  para obtener el resultado de la base de datos 
+            var data = await getBookingByDocumentNumberQuery.Execute(documentNumber);
+            //validar data si no es igual a null 
+            if (data == null)
+                return StatusCode(StatusCodes.Status404NotFound, ResponseApiService.Response(StatusCodes.Status404NotFound));
+            //si hay contenido en la base de datos devolver un 200
+            return StatusCode(StatusCodes.Status200OK, ResponseApiService.Response(StatusCodes.Status200OK, data));
         }
     }
 }
