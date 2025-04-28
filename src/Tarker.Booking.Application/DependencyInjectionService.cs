@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 using Tarker.Booking.Application.Configuration;
@@ -19,6 +20,10 @@ using Tarker.Booking.Application.DataBase.User.Commands.UpdateUserPassword;
 using Tarker.Booking.Application.DataBase.User.Queries.GetAllUser;
 using Tarker.Booking.Application.DataBase.User.Queries.GetUserById;
 using Tarker.Booking.Application.DataBase.User.Queries.GetUserByUserNameAndPassword;
+using Tarker.Booking.Application.Validation.User;
+using Tarker.Booking.Application.Validators.Booking;
+using Tarker.Booking.Application.Validators.Customer;
+using Tarker.Booking.Application.Validators.User;
 
 namespace Tarker.Booking.Application
 {
@@ -55,6 +60,22 @@ namespace Tarker.Booking.Application
             services.AddTransient<IGetAllBookingsQuery, GetAllBookingsQuery>();
             services.AddTransient<IGetBookingByDocumentNumberQuery, GetBookingByDocumentNumberQuery>();
             services.AddTransient<IGetBookingByTypeQuery, GetBookingByTypeQuery>();
+
+            #endregion
+         
+
+            #region Validator
+            services.AddScoped<IValidator<CreateUserModel>, CreateUserValidator>();
+            services.AddScoped<IValidator<UpdateUserModel>, UpdateUserValidator>();
+            services.AddScoped<IValidator<UpdateUserPasswordModel>, UpdateUserPasswordValidator>();
+            services.AddScoped<IValidator<(string,string)>, GetUserByNameAndPasswordValidator>();
+
+            services.AddScoped<IValidator<CreateCustomerModel>, CreateCustomerValidator>();
+            services.AddScoped<IValidator<UpdateCustomerModel>, UpdateCustomerValidator>();
+
+
+            services.AddScoped<IValidator<CreateBookingModel>, CreateBookingValidator>();
+
 
             #endregion
             return services;
